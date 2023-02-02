@@ -1,5 +1,13 @@
 [
     {
+        "id": "ae1c08dc88e7af9b",
+        "type": "tab",
+        "label": "Lights-Fan-Info",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "405213b10fbf850b",
         "type": "tab",
         "label": "HomeInfo",
@@ -8,19 +16,11 @@
         "env": []
     },
     {
-        "id": "acc66eae0bd38f04",
+        "id": "0501619cb62dee42",
         "type": "tab",
-        "label": "Lights Where Turned On/Off",
+        "label": "Fans.ON",
         "disabled": true,
-        "info": "",
-        "env": []
-    },
-    {
-        "id": "8873bc10d288c2c2",
-        "type": "tab",
-        "label": "Fans On For 15 mins",
-        "disabled": true,
-        "info": "",
+        "info": "Fans has been ON for more than 5 min!!!",
         "env": []
     },
     {
@@ -29,14 +29,6 @@
         "label": "Turn On/Off Outside Lights",
         "disabled": true,
         "info": "",
-        "env": []
-    },
-    {
-        "id": "0501619cb62dee42",
-        "type": "tab",
-        "label": "Fans.ON",
-        "disabled": false,
-        "info": "Fans has been ON for more than 5 min!!!",
         "env": []
     },
     {
@@ -61,6 +53,129 @@
         "type": "server",
         "name": "Home Assistant",
         "addon": true
+    },
+    {
+        "id": "4ab27a7282aab7b3",
+        "type": "inject",
+        "z": "ae1c08dc88e7af9b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "900",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "60",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 220,
+        "wires": [
+            [
+                "0ef8f25b6263420b"
+            ]
+        ]
+    },
+    {
+        "id": "0ef8f25b6263420b",
+        "type": "ha-get-entities",
+        "z": "ae1c08dc88e7af9b",
+        "name": "Find powered ON devices",
+        "server": "e593dd3.052432",
+        "version": 0,
+        "rules": [
+            {
+                "property": "entity_id",
+                "logic": "includes",
+                "value": "light.bathroom_dimmer_hs220,switch.bathroom_light_switch_hs200,light.master_bedroom_switch,light.kitchen_first_dimmer_hs220,light.kitchen_second_dimmer_hs220,switch.kitchen_light_hs210,light.living_room_switch,light.maxi_room_switch,light.office_switch,switch.dining_room_light_switch_hs200,switch.garage_motion_switch_ks200m,switch.laundry_motion_switch_ks200m,switch.patio_fan_light_switch_hs200,switch.main_ent_light_switch_hs200,switch.outside_lights_hs200,switch.porch_lights_hs200,fan.living_room_switch,fan.master_bedroom_switch,fan.maxi_room_switch,fan.office_switch",
+                "valueType": "str"
+            },
+            {
+                "property": "state",
+                "logic": "is",
+                "value": "on",
+                "valueType": "str"
+            }
+        ],
+        "output_type": "split",
+        "output_empty_results": false,
+        "output_location_type": "msg",
+        "output_location": "payload",
+        "output_results_count": 1,
+        "x": 330,
+        "y": 220,
+        "wires": [
+            [
+                "ecc73c6ddaac9714"
+            ]
+        ]
+    },
+    {
+        "id": "78542b775cc578e1",
+        "type": "api-call-service",
+        "z": "ae1c08dc88e7af9b",
+        "name": "Send a notification",
+        "server": "e593dd3.052432",
+        "version": 5,
+        "debugenabled": true,
+        "domain": "notify",
+        "service": "mobile_app_reyniers_iphone",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\"title\":\"Device is ON\",\"message\":\"{{payload}}\"}",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1010,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ecc73c6ddaac9714",
+        "type": "template",
+        "z": "ae1c08dc88e7af9b",
+        "name": "Get Friendly Name",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "The {{payload.attributes.friendly_name}} has been ON for more than 15 minutes!!!",
+        "output": "str",
+        "x": 570,
+        "y": 220,
+        "wires": [
+            [
+                "2ae4863b85f77d3e"
+            ]
+        ]
+    },
+    {
+        "id": "2ae4863b85f77d3e",
+        "type": "time-range-switch",
+        "z": "ae1c08dc88e7af9b",
+        "name": "Pause Notifications",
+        "lat": "28.496890",
+        "lon": "-82.553900",
+        "startTime": "08:00",
+        "endTime": "23:00",
+        "startOffset": 0,
+        "endOffset": 0,
+        "x": 790,
+        "y": 220,
+        "wires": [
+            [
+                "78542b775cc578e1"
+            ],
+            []
+        ]
     },
     {
         "id": "2c44caad41f4a7d7",
@@ -400,12 +515,12 @@
         ]
     },
     {
-        "id": "53068e834c06c590",
-        "type": "server-state-changed",
-        "z": "acc66eae0bd38f04",
-        "name": "Device is On",
+        "id": "e0eefd25af91d7d5",
+        "type": "poll-state",
+        "z": "0501619cb62dee42",
+        "name": "Fan Office",
         "server": "e593dd3.052432",
-        "version": 4,
+        "version": 2,
         "exposeToHomeAssistant": false,
         "haConfig": [
             {
@@ -417,68 +532,163 @@
                 "value": ""
             }
         ],
-        "entityidfilter": [
-            "fan.living_room_switch",
-            "fan.master_bedroom_switch",
-            "fan.office_switch",
-            "fan.maxi_room_switch"
-        ],
-        "entityidfiltertype": "list",
-        "outputinitially": false,
+        "updateinterval": "15",
+        "updateIntervalType": "num",
+        "updateIntervalUnits": "minutes",
+        "outputinitially": true,
+        "outputonchanged": true,
+        "entity_id": "fan.office_switch",
         "state_type": "str",
-        "haltifstate": "on",
+        "halt_if": "on",
         "halt_if_type": "str",
         "halt_if_compare": "is",
         "outputs": 2,
-        "output_only_on_state_change": true,
-        "for": "5",
-        "forType": "num",
-        "forUnits": "minutes",
-        "ignorePrevStateNull": false,
-        "ignorePrevStateUnknown": false,
-        "ignorePrevStateUnavailable": false,
-        "ignoreCurrentStateUnknown": false,
-        "ignoreCurrentStateUnavailable": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "eventData"
-            }
-        ],
-        "x": 130,
-        "y": 100,
+        "x": 220,
+        "y": 140,
         "wires": [
             [
-                "20ef09168211f89b"
+                "a558f7b44731996e"
             ],
             []
         ]
     },
     {
-        "id": "20ef09168211f89b",
+        "id": "06488158edcc430f",
+        "type": "poll-state",
+        "z": "0501619cb62dee42",
+        "name": "Fan Living Room",
+        "server": "e593dd3.052432",
+        "version": 2,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "updateinterval": "15",
+        "updateIntervalType": "num",
+        "updateIntervalUnits": "minutes",
+        "outputinitially": true,
+        "outputonchanged": true,
+        "entity_id": "fan.living_room_switch",
+        "state_type": "str",
+        "halt_if": "on",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 2,
+        "x": 200,
+        "y": 200,
+        "wires": [
+            [
+                "a558f7b44731996e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "7b0787efae70bec5",
+        "type": "poll-state",
+        "z": "0501619cb62dee42",
+        "name": "Fan Master Bedroom",
+        "server": "e593dd3.052432",
+        "version": 2,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "updateinterval": "15",
+        "updateIntervalType": "num",
+        "updateIntervalUnits": "minutes",
+        "outputinitially": true,
+        "outputonchanged": true,
+        "entity_id": "fan.master_bedroom_switch",
+        "state_type": "str",
+        "halt_if": "on",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 2,
+        "x": 180,
+        "y": 260,
+        "wires": [
+            [
+                "a558f7b44731996e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "16801dba8a318750",
+        "type": "poll-state",
+        "z": "0501619cb62dee42",
+        "name": "Fan Kid Bedroom",
+        "server": "e593dd3.052432",
+        "version": 2,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "updateinterval": "15",
+        "updateIntervalType": "num",
+        "updateIntervalUnits": "minutes",
+        "outputinitially": true,
+        "outputonchanged": true,
+        "entity_id": "fan.maxi_room_switch",
+        "state_type": "str",
+        "halt_if": "on",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 2,
+        "x": 180,
+        "y": 320,
+        "wires": [
+            [
+                "a558f7b44731996e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "a558f7b44731996e",
         "type": "template",
-        "z": "acc66eae0bd38f04",
+        "z": "0501619cb62dee42",
         "name": "Get Friendly Name",
-        "field": "payload",
+        "field": "data",
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
-        "template": "The {{payload.new_state.attributes.friendly_name}} has been ON for more than 5 minutes!!!",
+        "template": "The {{data.attributes.friendly_name}} has been ON for more than 5 minutes!!!",
         "output": "str",
-        "x": 350,
-        "y": 100,
+        "x": 470,
+        "y": 220,
         "wires": [
             [
-                "7dea291ec83ed2db"
+                "075a12b697542801"
             ]
         ]
     },
     {
-        "id": "7dea291ec83ed2db",
+        "id": "075a12b697542801",
         "type": "api-call-service",
-        "z": "acc66eae0bd38f04",
+        "z": "0501619cb62dee42",
         "name": "Send a notification",
         "server": "e593dd3.052432",
         "version": 5,
@@ -488,178 +698,17 @@
         "areaId": [],
         "deviceId": [],
         "entityId": [],
-        "data": "{\"title\":\"Device is ON\",\"message\":\"{{payload}}\"}",
+        "data": "{\"title\":\"Device is ON\",\"message\":\"{{data}}\"}",
         "dataType": "json",
         "mergeContext": "",
         "mustacheAltTags": false,
         "outputProperties": [],
         "queue": "none",
-        "x": 570,
-        "y": 100,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "d7260ff2dfa1d86b",
-        "type": "time-range-switch",
-        "z": "8873bc10d288c2c2",
-        "name": "",
-        "lat": "",
-        "lon": "",
-        "startTime": "20:00",
-        "endTime": "08:00",
-        "startOffset": 0,
-        "endOffset": 0,
-        "x": 550,
-        "y": 140,
-        "wires": [
-            [
-                "f782e0735f1c5db0"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "2cebf4f65297a6b3",
-        "type": "trigger",
-        "z": "8873bc10d288c2c2",
-        "name": "on for 20 minutes",
-        "op1": "",
-        "op2": "true",
-        "op1type": "nul",
-        "op2type": "bool",
-        "duration": "5",
-        "extend": true,
-        "overrideDelay": false,
-        "units": "s",
-        "reset": "off",
-        "bytopic": "all",
-        "topic": "topic",
-        "outputs": 1,
-        "x": 330,
-        "y": 140,
-        "wires": [
-            [
-                "d7260ff2dfa1d86b",
-                "c2c0b49930bb60b8"
-            ]
-        ]
-    },
-    {
-        "id": "f782e0735f1c5db0",
-        "type": "debug",
-        "z": "8873bc10d288c2c2",
-        "name": "debug 3",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 720,
-        "y": 100,
-        "wires": []
-    },
-    {
-        "id": "b57cb8d660db34a9",
-        "type": "server-state-changed",
-        "z": "8873bc10d288c2c2",
-        "name": "Fan On",
-        "server": "e593dd3.052432",
-        "version": 4,
-        "exposeToHomeAssistant": false,
-        "haConfig": [
-            {
-                "property": "name",
-                "value": ""
-            },
-            {
-                "property": "icon",
-                "value": ""
-            }
-        ],
-        "entityidfilter": [
-            "fan.living_room_switch",
-            "fan.master_bedroom_switch",
-            "fan.office_switch",
-            "fan.maxi_room_switch"
-        ],
-        "entityidfiltertype": "list",
-        "outputinitially": false,
-        "state_type": "habool",
-        "haltifstate": "true",
-        "halt_if_type": "bool",
-        "halt_if_compare": "is",
-        "outputs": 2,
-        "output_only_on_state_change": true,
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "ignorePrevStateNull": false,
-        "ignorePrevStateUnknown": false,
-        "ignorePrevStateUnavailable": false,
-        "ignoreCurrentStateUnknown": false,
-        "ignoreCurrentStateUnavailable": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "eventData"
-            },
-            {
-                "property": "topic",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "triggerId"
-            }
-        ],
-        "x": 130,
+        "x": 690,
         "y": 220,
         "wires": [
-            [
-                "2cebf4f65297a6b3",
-                "b4d658ae65913d48"
-            ],
             []
         ]
-    },
-    {
-        "id": "b4d658ae65913d48",
-        "type": "debug",
-        "z": "8873bc10d288c2c2",
-        "name": "debug 4",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 300,
-        "y": 260,
-        "wires": []
-    },
-    {
-        "id": "c2c0b49930bb60b8",
-        "type": "debug",
-        "z": "8873bc10d288c2c2",
-        "name": "debug 5",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 640,
-        "y": 260,
-        "wires": []
     },
     {
         "id": "b74ada49.d7e408",
@@ -816,201 +865,5 @@
         "x": 360,
         "y": 220,
         "wires": []
-    },
-    {
-        "id": "e0eefd25af91d7d5",
-        "type": "poll-state",
-        "z": "0501619cb62dee42",
-        "name": "Fan Office",
-        "server": "e593dd3.052432",
-        "version": 2,
-        "exposeToHomeAssistant": false,
-        "haConfig": [
-            {
-                "property": "name",
-                "value": ""
-            },
-            {
-                "property": "icon",
-                "value": ""
-            }
-        ],
-        "updateinterval": "5",
-        "updateIntervalType": "num",
-        "updateIntervalUnits": "minutes",
-        "outputinitially": true,
-        "outputonchanged": true,
-        "entity_id": "fan.office_switch",
-        "state_type": "str",
-        "halt_if": "on",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "outputs": 2,
-        "x": 220,
-        "y": 140,
-        "wires": [
-            [
-                "a558f7b44731996e"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "06488158edcc430f",
-        "type": "poll-state",
-        "z": "0501619cb62dee42",
-        "name": "Fan Living Room",
-        "server": "e593dd3.052432",
-        "version": 2,
-        "exposeToHomeAssistant": false,
-        "haConfig": [
-            {
-                "property": "name",
-                "value": ""
-            },
-            {
-                "property": "icon",
-                "value": ""
-            }
-        ],
-        "updateinterval": "5",
-        "updateIntervalType": "num",
-        "updateIntervalUnits": "minutes",
-        "outputinitially": true,
-        "outputonchanged": true,
-        "entity_id": "fan.living_room_switch",
-        "state_type": "str",
-        "halt_if": "on",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "outputs": 2,
-        "x": 200,
-        "y": 200,
-        "wires": [
-            [
-                "a558f7b44731996e"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "7b0787efae70bec5",
-        "type": "poll-state",
-        "z": "0501619cb62dee42",
-        "name": "Fan Master Bedroom",
-        "server": "e593dd3.052432",
-        "version": 2,
-        "exposeToHomeAssistant": false,
-        "haConfig": [
-            {
-                "property": "name",
-                "value": ""
-            },
-            {
-                "property": "icon",
-                "value": ""
-            }
-        ],
-        "updateinterval": "5",
-        "updateIntervalType": "num",
-        "updateIntervalUnits": "minutes",
-        "outputinitially": true,
-        "outputonchanged": true,
-        "entity_id": "fan.master_bedroom_switch",
-        "state_type": "str",
-        "halt_if": "on",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "outputs": 2,
-        "x": 180,
-        "y": 260,
-        "wires": [
-            [
-                "a558f7b44731996e"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "16801dba8a318750",
-        "type": "poll-state",
-        "z": "0501619cb62dee42",
-        "name": "Fan Maxi Bedroom",
-        "server": "e593dd3.052432",
-        "version": 2,
-        "exposeToHomeAssistant": false,
-        "haConfig": [
-            {
-                "property": "name",
-                "value": ""
-            },
-            {
-                "property": "icon",
-                "value": ""
-            }
-        ],
-        "updateinterval": "5",
-        "updateIntervalType": "num",
-        "updateIntervalUnits": "minutes",
-        "outputinitially": true,
-        "outputonchanged": true,
-        "entity_id": "fan.maxi_room_switch",
-        "state_type": "str",
-        "halt_if": "on",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "outputs": 2,
-        "x": 190,
-        "y": 320,
-        "wires": [
-            [
-                "a558f7b44731996e"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "a558f7b44731996e",
-        "type": "template",
-        "z": "0501619cb62dee42",
-        "name": "Get Friendly Name",
-        "field": "data",
-        "fieldType": "msg",
-        "format": "handlebars",
-        "syntax": "mustache",
-        "template": "The {{data.attributes.friendly_name}} has been ON for more than 5 minutes!!!",
-        "output": "str",
-        "x": 470,
-        "y": 220,
-        "wires": [
-            [
-                "075a12b697542801"
-            ]
-        ]
-    },
-    {
-        "id": "075a12b697542801",
-        "type": "api-call-service",
-        "z": "0501619cb62dee42",
-        "name": "Send a notification",
-        "server": "e593dd3.052432",
-        "version": 5,
-        "debugenabled": true,
-        "domain": "notify",
-        "service": "mobile_app_reyniers_iphone",
-        "areaId": [],
-        "deviceId": [],
-        "entityId": [],
-        "data": "{\"title\":\"Device is ON\",\"message\":\"{{data}}\"}",
-        "dataType": "json",
-        "mergeContext": "",
-        "mustacheAltTags": false,
-        "outputProperties": [],
-        "queue": "none",
-        "x": 690,
-        "y": 220,
-        "wires": [
-            []
-        ]
     }
 ]
