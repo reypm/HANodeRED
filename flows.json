@@ -2,7 +2,15 @@
     {
         "id": "ae1c08dc88e7af9b",
         "type": "tab",
-        "label": "Lights-Fan-Info",
+        "label": "DevicesInfo",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "1e603cf0185a20e2",
+        "type": "tab",
+        "label": "Turn On/Off Outside Lights",
         "disabled": false,
         "info": "",
         "env": []
@@ -21,14 +29,6 @@
         "label": "Fans.ON",
         "disabled": true,
         "info": "Fans has been ON for more than 5 min!!!",
-        "env": []
-    },
-    {
-        "id": "1e603cf0185a20e2",
-        "type": "tab",
-        "label": "Turn On/Off Outside Lights",
-        "disabled": true,
-        "info": "",
         "env": []
     },
     {
@@ -55,31 +55,6 @@
         "addon": true
     },
     {
-        "id": "4ab27a7282aab7b3",
-        "type": "inject",
-        "z": "ae1c08dc88e7af9b",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            }
-        ],
-        "repeat": "900",
-        "crontab": "",
-        "once": false,
-        "onceDelay": "60",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 130,
-        "y": 220,
-        "wires": [
-            [
-                "0ef8f25b6263420b"
-            ]
-        ]
-    },
-    {
         "id": "0ef8f25b6263420b",
         "type": "ha-get-entities",
         "z": "ae1c08dc88e7af9b",
@@ -90,7 +65,7 @@
             {
                 "property": "entity_id",
                 "logic": "includes",
-                "value": "light.bathroom_dimmer_hs220,switch.bathroom_light_switch_hs200,light.master_bedroom_switch,light.kitchen_first_dimmer_hs220,light.kitchen_second_dimmer_hs220,switch.kitchen_light_hs210,light.living_room_switch,light.maxi_room_switch,light.office_switch,switch.dining_room_light_switch_hs200,switch.garage_motion_switch_ks200m,switch.laundry_motion_switch_ks200m,switch.patio_fan_light_switch_hs200,switch.main_ent_light_switch_hs200,switch.outside_lights_hs200,switch.porch_lights_hs200,fan.living_room_switch,fan.master_bedroom_switch,fan.maxi_room_switch,fan.office_switch",
+                "value": "light.bathroom_dimmer_hs220,switch.bathroom_light_switch_hs200,light.master_bedroom_switch,light.kitchen_first_dimmer_hs220,light.kitchen_second_dimmer_hs220,switch.kitchen_light_hs210,light.living_room_switch,light.maxi_room_switch,light.office_switch,switch.dining_room_light_switch_hs200,switch.garage_motion_switch_ks200m,switch.laundry_motion_switch_ks200m,switch.patio_fan_light_switch_hs200,switch.main_ent_light_switch_hs200,switch.outside_lights_hs200,switch.porch_lights_hs200,fan.living_room_switch,fan.master_bedroom_switch,fan.maxi_room_switch,fan.office_switch,light.office_light",
                 "valueType": "str"
             },
             {
@@ -105,8 +80,8 @@
         "output_location_type": "msg",
         "output_location": "payload",
         "output_results_count": 1,
-        "x": 330,
-        "y": 220,
+        "x": 590,
+        "y": 200,
         "wires": [
             [
                 "ecc73c6ddaac9714"
@@ -132,8 +107,8 @@
         "mustacheAltTags": false,
         "outputProperties": [],
         "queue": "none",
-        "x": 1010,
-        "y": 200,
+        "x": 1090,
+        "y": 180,
         "wires": [
             []
         ]
@@ -149,31 +124,180 @@
         "syntax": "mustache",
         "template": "The {{payload.attributes.friendly_name}} has been ON for more than 15 minutes!!!",
         "output": "str",
-        "x": 570,
-        "y": 220,
+        "x": 850,
+        "y": 200,
         "wires": [
             [
-                "2ae4863b85f77d3e"
+                "78542b775cc578e1"
             ]
         ]
     },
     {
-        "id": "2ae4863b85f77d3e",
+        "id": "f4ed182b68c6681c",
         "type": "time-range-switch",
         "z": "ae1c08dc88e7af9b",
         "name": "Pause Notifications",
         "lat": "28.496890",
         "lon": "-82.553900",
         "startTime": "08:00",
-        "endTime": "23:00",
+        "endTime": "22:30",
         "startOffset": 0,
         "endOffset": 0,
-        "x": 790,
+        "x": 330,
+        "y": 200,
+        "wires": [
+            [
+                "0ef8f25b6263420b"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "4ab27a7282aab7b3",
+        "type": "inject",
+        "z": "ae1c08dc88e7af9b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "15",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "60",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
         "y": 220,
         "wires": [
             [
-                "78542b775cc578e1"
+                "f4ed182b68c6681c"
+            ]
+        ]
+    },
+    {
+        "id": "b74ada49.d7e408",
+        "type": "server-state-changed",
+        "z": "1e603cf0185a20e2",
+        "name": "Sunrise - Sunset",
+        "server": "e593dd3.052432",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "sun.sun",
+        "entityidfiltertype": "exact",
+        "outputinitially": false,
+        "state_type": "str",
+        "haltifstate": "above_horizon",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 2,
+        "output_only_on_state_change": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 140,
+        "y": 140,
+        "wires": [
+            [
+                "1f467cbb.0c3983"
             ],
+            [
+                "da5ff3e0.cbb2a"
+            ]
+        ]
+    },
+    {
+        "id": "1f467cbb.0c3983",
+        "type": "api-call-service",
+        "z": "1e603cf0185a20e2",
+        "name": "Turn Off Outside Lights",
+        "server": "e593dd3.052432",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "switch",
+        "service": "turn_off",
+        "areaId": [],
+        "deviceId": [
+            "5aad71b6197b0a07a7d5a4bb4c16d8ed"
+        ],
+        "entityId": [],
+        "data": "",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "output_location": "",
+        "output_location_type": "none",
+        "x": 390,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "da5ff3e0.cbb2a",
+        "type": "api-call-service",
+        "z": "1e603cf0185a20e2",
+        "name": "Turn On Outside Lights",
+        "server": "e593dd3.052432",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "switch",
+        "service": "turn_on",
+        "areaId": [],
+        "deviceId": [
+            "5aad71b6197b0a07a7d5a4bb4c16d8ed"
+        ],
+        "entityId": [],
+        "data": "",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "output_location": "",
+        "output_location_type": "none",
+        "x": 390,
+        "y": 180,
+        "wires": [
             []
         ]
     },
@@ -709,161 +833,5 @@
         "wires": [
             []
         ]
-    },
-    {
-        "id": "b74ada49.d7e408",
-        "type": "server-state-changed",
-        "z": "1e603cf0185a20e2",
-        "name": "Sunrise - Sunset",
-        "server": "e593dd3.052432",
-        "version": 4,
-        "exposeToHomeAssistant": false,
-        "haConfig": [
-            {
-                "property": "name",
-                "value": ""
-            },
-            {
-                "property": "icon",
-                "value": ""
-            }
-        ],
-        "entityidfilter": "sun.sun",
-        "entityidfiltertype": "exact",
-        "outputinitially": false,
-        "state_type": "str",
-        "haltifstate": "above_horizon",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "outputs": 2,
-        "output_only_on_state_change": true,
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "ignorePrevStateNull": false,
-        "ignorePrevStateUnknown": false,
-        "ignorePrevStateUnavailable": false,
-        "ignoreCurrentStateUnknown": false,
-        "ignoreCurrentStateUnavailable": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entityState"
-            },
-            {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "eventData"
-            },
-            {
-                "property": "topic",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "triggerId"
-            }
-        ],
-        "x": 120,
-        "y": 120,
-        "wires": [
-            [
-                "1f467cbb.0c3983",
-                "2aa91b760919d932"
-            ],
-            [
-                "da5ff3e0.cbb2a",
-                "48fb1c8d8309b57e"
-            ]
-        ]
-    },
-    {
-        "id": "1f467cbb.0c3983",
-        "type": "api-call-service",
-        "z": "1e603cf0185a20e2",
-        "name": "Turn Off Outside Lights",
-        "server": "e593dd3.052432",
-        "version": 5,
-        "debugenabled": false,
-        "domain": "light",
-        "service": "turn_off",
-        "areaId": [],
-        "deviceId": [],
-        "entityId": [],
-        "data": "",
-        "dataType": "json",
-        "mergeContext": "",
-        "mustacheAltTags": false,
-        "outputProperties": [],
-        "queue": "none",
-        "output_location": "",
-        "output_location_type": "none",
-        "x": 390,
-        "y": 100,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "da5ff3e0.cbb2a",
-        "type": "api-call-service",
-        "z": "1e603cf0185a20e2",
-        "name": "Turn On Outside Lights",
-        "server": "e593dd3.052432",
-        "version": 5,
-        "debugenabled": false,
-        "domain": "light",
-        "service": "turn_on",
-        "areaId": [],
-        "deviceId": [],
-        "entityId": [],
-        "data": "",
-        "dataType": "json",
-        "mergeContext": "",
-        "mustacheAltTags": false,
-        "outputProperties": [],
-        "queue": "none",
-        "output_location": "",
-        "output_location_type": "none",
-        "x": 390,
-        "y": 180,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "2aa91b760919d932",
-        "type": "debug",
-        "z": "1e603cf0185a20e2",
-        "name": "Above Horizon",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 360,
-        "y": 60,
-        "wires": []
-    },
-    {
-        "id": "48fb1c8d8309b57e",
-        "type": "debug",
-        "z": "1e603cf0185a20e2",
-        "name": "Below Horizon",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 360,
-        "y": 220,
-        "wires": []
     }
 ]
